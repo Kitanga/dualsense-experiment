@@ -48,9 +48,10 @@ export const PS5DualSenseAdaptiveTriggerStates = {
         // Frequency
         14,
         // Force
-        255,
+        140,
         // Start
-        14
+        14,
+        // 255
     ],
 }
 
