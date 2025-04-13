@@ -64,7 +64,7 @@ export class Controller {
 
     lastState!: Controller["state"];
 
-    events: Map<string, tStateChangeCallback> = new Map();
+    events: Map<keyof typeof this.state, tStateChangeCallback> = new Map();
 
     outputStruct = new OutputStruct();
 
@@ -124,7 +124,7 @@ export class Controller {
 
             const state = this.state;
 
-            this.lastState = Object.assign({}, state);
+            const lastState = this.lastState = Object.assign({}, state);
 
             state.lsx = normalizeThumbStickAxis(axes0);
             state.lsy = normalizeThumbStickAxis(axes1);
@@ -198,10 +198,10 @@ export class Controller {
 
             for (let key in state) {
                 const currentState = state[key as keyof typeof state];
-                const previousState = state[key as keyof typeof state];
+                const previousState = lastState[key as keyof typeof state];
 
                 if (currentState != previousState) {
-                    events.get(key)?.(currentState, previousState);
+                    events.get(key as keyof typeof state)?.(currentState, previousState);
                 }
             }
         }
@@ -216,7 +216,7 @@ export class Controller {
         const report = this.outputStruct.reportData;
         const reportID = 0x02;
 
-        console.log('report:', report);
+        // console.log('report:', report);
 
         try {
             await this.device.sendReport(reportID, report);
