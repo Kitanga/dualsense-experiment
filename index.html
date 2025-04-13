@@ -19,29 +19,33 @@
 
       <strong>Changing player colours and lights:</strong>
       <ul>
-        <li>X: Green Colour and player 1 light</li>
-        <li>Square: Blue colour and player 2 light</li>
-        <li>Square: Red colour and player 3 light</li>
-        <li>Triangle: Yellow colour and player 4 light</li>
+        <li>X: Green Colour</li>
+        <li>Square: Blue colour</li>
+        <li>Square: Red colour</li>
+        <li>Triangle: Yellow colour</li>
+        <li>L3: Black</li>
+        <li>R3: White</li>
       </ul>
 
       <strong>Create vibrations using L1/R1</strong>
       <ul>
-        <li>L1: A wave that starts on the left and moves to the right</li>
-        <li>R1: A wave that starts on the right and moves to the left</li>
+        <li>L1: Left actuator vibrates</li>
+        <li>R1: Right actuator vibrates</li>
       </ul>
 
       <strong>Change player controller lights using DPAD, start button, and select button</strong>
       <ul>
         <li>DPAD (DOWN, LEFT, RIGHT, UP, for 1, 2, 3, 4, respectively)</li>
-        <li>Select: 5 lights</li>
-        <li>Start: off lights</li>
+        <li>Select/Create button: all 5 lights on</li>
+        <li>Start/Option button: all lights off</li>
       </ul>
 
       <strong>Gyro</strong>
-      <ul>TODO: Show a 3D cube or something to </ul>
+      <div>
+        <ul id="gyro-z" style="display: inline-block; text-align: center;">This will start to rotate if you click on it and rotate your controller like a steering wheel</ul>
+      </div>
 
-      <strong>Triggers</strong>
+      <strong>Change Feature State</strong>
       <ul>
         <li>
           L2: <select id="l2-trigger">
@@ -53,10 +57,20 @@
         </li>
         <li>
           R2: <select id="r2-trigger">
-            <option value="r-off" selected>OFF</option>
+            <option value="r-off">OFF</option>
             <option value="r-resistance">Resistance</option>
             <option value="r-trigger">Trigger</option>
-            <option value="r-auto-trigger">Auto Trigger</option>
+            <option value="r-auto-trigger" selected>Auto Trigger</option>
+          </select>
+        </li>
+        <li>
+          <strong>Note:</strong> Holding R1/L1 and then following up with one of the action buttons on the right (X, square, etc.), will set either R2/L2's trigger mode
+        </li>
+        <li>
+          Player LED Brightness <select id="led-brightness">
+            <option value="r-off">Low</option>
+            <option value="r-resistance">Medium</option>
+            <option value="r-trigger">High</option>
           </select>
         </li>
       </ul>
