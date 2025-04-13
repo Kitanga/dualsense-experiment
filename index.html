@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PS5 DualSense Controller Experiment</title>
+</head>
+
+<body>
+  <div id="app">
+    <div>
+      <h1>PS5 DualSense Controller Experiment</h1>
+
+      <div style="margin-bottom: 34px;">
+        <button type="button" id="add-device">Add Device</button>
+      </div>
+
+      <strong>Changing player colours and lights:</strong>
+      <ul>
+        <li>X: Green Colour and player 1 light</li>
+        <li>Square: Blue colour and player 2 light</li>
+        <li>Square: Red colour and player 3 light</li>
+        <li>Triangle: Yellow colour and player 4 light</li>
+      </ul>
+
+      <strong>Create vibrations using L1/R1</strong>
+      <ul>
+        <li>L1: A wave that starts on the left and moves to the right</li>
+        <li>R1: A wave that starts on the right and moves to the left</li>
+      </ul>
+
+      <strong>Change player controller lights using DPAD, start button, and select button</strong>
+      <ul>
+        <li>DPAD (DOWN, LEFT, RIGHT, UP, for 1, 2, 3, 4, respectively)</li>
+        <li>Select: 5 lights</li>
+        <li>Start: off lights</li>
+      </ul>
+
+      <strong>Gyro</strong>
+      <ul>TODO: Show a 3D cube or something to </ul>
+
+      <strong>Triggers</strong>
+      <ul>
+        <li>
+          L2: <select id="l2-trigger">
+            <option value="l-off" selected>OFF</option>
+            <option value="l-resistance">Resistance</option>
+            <option value="l-trigger">Trigger</option>
+            <option value="l-auto-trigger">Auto Trigger</option>
+          </select>
+        </li>
+        <li>
+          R2: <select id="r2-trigger">
+            <option value="r-off" selected>OFF</option>
+            <option value="r-resistance">Resistance</option>
+            <option value="r-trigger">Trigger</option>
+            <option value="r-auto-trigger">Auto Trigger</option>
+          </select>
+        </li>
+      </ul>
+
+      <strong>TODO: Set rumble strength below</strong>
+      <ul>
+        <li>Low</li>
+        <li>Medium</li>
+        <li>High</li>
+      </ul>
+    </div>
+
+    <div style="margin-top: 34px;">
+      <strong>State:</strong>
+      <div>
+        <div readonly id="state"></div>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
+</html>
