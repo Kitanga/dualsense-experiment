@@ -1,4 +1,4 @@
-import { ConnectionType, FPS, PS5DualSenseAdaptiveTriggerModes, PS5DualSenseAdaptiveTriggerStates, PS5_OPTIONS, USAGE_ID_GD_GAME_PAD, USAGE_PAGE_GENERIC_DESKTOP } from './constants';
+import { ConnectionType, FPS, PS5DualSenseAdaptiveTriggerModes, PS5DualSenseAdaptiveTriggerStates, PS5_OPTIONS, PlayerLedControl, USAGE_ID_GD_GAME_PAD, USAGE_PAGE_GENERIC_DESKTOP } from './constants';
 import { Controller } from './Controller';
 import './style.css';
 
@@ -8,6 +8,7 @@ const addDeviceBtn = document.getElementById('add-device')!;
 const stateTextBox = document.getElementById('state') as HTMLDivElement;
 const l2Trigger = document.getElementById('l2-trigger') as HTMLSelectElement;
 const r2Trigger = document.getElementById('r2-trigger') as HTMLSelectElement;
+const gyro = document.getElementById('gyro-z') as HTMLUListElement;
 
 const hid = navigator.hid;
 
@@ -70,7 +71,7 @@ async function connectToDevice() {
   });
 
   // Set the trigger changes
-  l2Trigger.onchange = r2Trigger.onchange = (ev) => {
+  l2Trigger.onchange = r2Trigger.onchange = async (ev) => {
     // console.log('select:', ev);
 
     const struct = controller.outputStruct;
@@ -115,9 +116,206 @@ async function connectToDevice() {
     });
 
     controller.updateDevice();
+
+    controller.setStateChangeEvent('r2', (curVal, prevVal) => {
+      // console.log('r2 changed:', curVal);
+    });
   }
 
-  // Set the player to player1
+  // @ts-ignore
+  l2Trigger.onchange({ target: l2Trigger });
+  // @ts-ignore
+  r2Trigger.onchange({ target: r2Trigger, });
+
+  controller.setStateChangeEvent('l1', (val) => {
+    if (val) {
+      controller.outputStruct.bcVibrationLeft = 128;
+    } else {
+      controller.outputStruct.bcVibrationLeft = 0;
+    }
+
+    controller.updateDevice();
+  });
+  controller.setStateChangeEvent('r1', (val) => {
+    if (val) {
+      controller.outputStruct.bcVibrationRight = 128;
+    } else {
+      controller.outputStruct.bcVibrationRight = 0;
+    }
+
+    controller.updateDevice();
+  });
+  controller.setStateChangeEvent('cross', (val) => {
+    if (val) {
+      if (controller.state.r1) {
+        r2Trigger.value = 'r-resistance';
+        // @ts-ignore
+        r2Trigger.onchange({ target: r2Trigger });
+      } else if (controller.state.l1) {
+        l2Trigger.value = 'l-resistance';
+        // @ts-ignore
+        l2Trigger.onchange({ target: l2Trigger });
+      } else {
+        // Green
+        controller.outputStruct.ledCRed = 98;
+        controller.outputStruct.ledCGreen = 195;
+        controller.outputStruct.ledCBlue = 26;
+      }
+    }
+
+    controller.updateDevice();
+  });
+  controller.setStateChangeEvent('square', (val) => {
+    if (val) {
+      if (controller.state.r1) {
+        r2Trigger.value = 'r-trigger';
+        // @ts-ignore
+        r2Trigger.onchange({ target: r2Trigger });
+      } else if (controller.state.l1) {
+        l2Trigger.value = 'l-trigger';
+        // @ts-ignore
+        l2Trigger.onchange({ target: l2Trigger });
+      } else {
+        // Blue
+        controller.outputStruct.ledCRed = 0;
+        controller.outputStruct.ledCGreen = 0;
+        controller.outputStruct.ledCBlue = 255;
+      }
+    }
+
+    controller.updateDevice();
+  });
+  controller.setStateChangeEvent('circle', (val) => {
+    if (val) {
+      if (controller.state.r1) {
+        r2Trigger.value = 'r-auto-trigger';
+        // @ts-ignore
+        r2Trigger.onchange({ target: r2Trigger });
+      } else if (controller.state.l1) {
+        l2Trigger.value = 'l-auto-trigger';
+        // @ts-ignore
+        l2Trigger.onchange({ target: l2Trigger });
+      } else {
+        // Red
+        controller.outputStruct.ledCRed = 255;
+        controller.outputStruct.ledCGreen = 0;
+        controller.outputStruct.ledCBlue = 0;
+      }
+    }
+
+    controller.updateDevice();
+  });
+  controller.setStateChangeEvent('triangle', (val) => {
+    if (val) {
+      if (controller.state.r1) {
+        r2Trigger.value = 'r-off';
+        // @ts-ignore
+        r2Trigger.onchange({ target: r2Trigger });
+      } else if (controller.state.l1) {
+        l2Trigger.value = 'l-off';
+        // @ts-ignore
+        l2Trigger.onchange({ target: l2Trigger });
+      } else {
+        // Yellow
+        controller.outputStruct.ledCRed = 255;
+        controller.outputStruct.ledCGreen = 255;
+        controller.outputStruct.ledCBlue = 0;
+      }
+    }
+
+    controller.updateDevice();
+  });
+  controller.setStateChangeEvent('l3', (val) => {
+    if (val) {
+      // Black
+      controller.outputStruct.ledCRed = 0;
+      controller.outputStruct.ledCGreen = 0;
+      controller.outputStruct.ledCBlue = 0;
+    }
+
+    controller.updateDevice();
+  });
+  controller.setStateChangeEvent('r3', (val) => {
+    if (val) {
+      // White
+      controller.outputStruct.ledCRed = 255;
+      controller.outputStruct.ledCGreen = 255;
+      controller.outputStruct.ledCBlue = 255;
+    }
+
+    controller.updateDevice();
+  });
+  controller.setStateChangeEvent('down', (val) => {
+    if (val) {
+      controller.outputStruct.playerIndicator = PlayerLedControl.PLAYER_1;
+    }
+
+    controller.updateDevice();
+  });
+  controller.setStateChangeEvent('left', (val) => {
+    if (val) {
+      controller.outputStruct.playerIndicator = PlayerLedControl.PLAYER_2;
+    }
+
+    controller.updateDevice();
+  });
+  controller.setStateChangeEvent('right', (val) => {
+    if (val) {
+      controller.outputStruct.playerIndicator = PlayerLedControl.PLAYER_3;
+    }
+
+    controller.updateDevice();
+  });
+  controller.setStateChangeEvent('up', (val) => {
+    if (val) {
+      controller.outputStruct.playerIndicator = PlayerLedControl.PLAYER_4;
+    }
+
+    controller.updateDevice();
+  });
+  controller.setStateChangeEvent('create', (val) => {
+    if (val) {
+      controller.outputStruct.playerIndicator = PlayerLedControl.ALL;
+    }
+
+    controller.updateDevice();
+  });
+  controller.setStateChangeEvent('options', (val) => {
+    if (val) {
+      controller.outputStruct.playerIndicator = PlayerLedControl.OFF;
+    }
+
+    controller.updateDevice();
+  });
+  let ming = (window as any).ming = Infinity;
+  let maxg = (window as any).maxg = -Infinity;
+
+
+  let rotate = (window as any).rt = 0;
+
+  let gyroActive = true;
+
+  gyro.onclick = () => {
+    gyroActive = !gyroActive;
+
+    if (!gyroActive) {
+      gyro.style.transform = "";
+    }
+  };
+
+  controller.setStateChangeEvent<number>('gyroy', (val) => {
+    // controller.outputStruct.playerIndicator = PlayerLedControl.OFF;
+    // const newVal = ;
+    // rotate = (window as any).rt = (((val / (0xffff)) * 0.1) + rotate);
+
+    rotate = (window as any).rt = ((val / 0xffff) + rotate) % 1000;
+
+    if (gyroActive) {
+      gyro.style.transform = `rotate(${-rotate * 360}deg)`;
+    }
+
+    controller.updateDevice();
+  });
 
   // Send an output report with base info
   controller.updateDevice();
