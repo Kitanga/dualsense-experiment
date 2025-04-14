@@ -10,6 +10,16 @@ const l2Trigger = document.getElementById('l2-trigger') as HTMLSelectElement;
 const r2Trigger = document.getElementById('r2-trigger') as HTMLSelectElement;
 const gyro = document.getElementById('gyro-z') as HTMLUListElement;
 
+let gyroActive = false;
+
+gyro.onclick = () => {
+  gyroActive = !gyroActive;
+
+  if (!gyroActive) {
+    gyro.style.transform = "";
+  }
+};
+
 const hid = navigator.hid;
 
 const alreadyPairedDevices = await hid.getDevices();
@@ -293,26 +303,19 @@ async function connectToDevice() {
 
   let rotate = (window as any).rt = 0;
 
-  let gyroActive = true;
-
-  gyro.onclick = () => {
-    gyroActive = !gyroActive;
-
-    if (!gyroActive) {
-      gyro.style.transform = "";
-    }
-  };
-
   controller.setStateChangeEvent<number>('gyroy', (val) => {
     // controller.outputStruct.playerIndicator = PlayerLedControl.OFF;
     // const newVal = ;
     // rotate = (window as any).rt = (((val / (0xffff)) * 0.1) + rotate);
 
-    rotate = (window as any).rt = ((val / 0xffff) + rotate) % 1000;
+    if (val > -100 && val < 100) return;
 
-    if (gyroActive) {
-      gyro.style.transform = `rotate(${-rotate * 360}deg)`;
-    }
+    // rotate = (window as any).rt += (((val - 0x7fff) / 0x7fff)) * 16;
+    rotate = (window as any).rt = (new Int16Array([val])[0]) / 0x7fff;
+
+    // if (gyroActive) {
+    //   gyro.style.transform = `rotate(${-rotate * 360}deg)`;
+    // }
 
     controller.updateDevice();
   });
@@ -322,8 +325,9 @@ async function connectToDevice() {
 }
 
 // 60 FPS updates
-let nextUpdate = 0;
-let diffUpdate = 1000 / FPS;
+let nextUpdate = performance.now();
+let diffUpdate = 1000 / 30;
+let rot = (window as any).rt2 = 0;
 
 function update() {
   requestAnimationFrame(update);
@@ -331,7 +335,9 @@ function update() {
   const now = performance.now();
 
   if (now > nextUpdate) {
+    // const DT = now - lastUpdated;
     nextUpdate = now + diffUpdate;
+    // lastUpdated = now;
 
     const controller = (window as any).ctlr;
 
@@ -346,6 +352,12 @@ function update() {
       }
 
       stateTextBox.innerHTML = stateStr;
+    }
+
+    rot = (window as any).rt2 = ((window as any).rt + rot) || 0;
+    
+    if (gyroActive) {
+      gyro.style.transform = `rotate(${-rot * 360}deg)`;
     }
   }
 }
