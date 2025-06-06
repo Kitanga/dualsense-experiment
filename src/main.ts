@@ -1,4 +1,4 @@
-import { ConnectionType, FPS, PS5DualSenseAdaptiveTriggerModes, PS5DualSenseAdaptiveTriggerStates, PS5_OPTIONS, PlayerLedControl, USAGE_ID_GD_GAME_PAD, USAGE_PAGE_GENERIC_DESKTOP } from './constants';
+import { ConnectionType, PS5DualSenseAdaptiveTriggerModes, PS5DualSenseAdaptiveTriggerStates, PS5_OPTIONS, PlayerLedControl, USAGE_ID_GD_GAME_PAD, USAGE_PAGE_GENERIC_DESKTOP } from './constants';
 import { Controller } from './Controller';
 import './style.css';
 
@@ -75,7 +75,7 @@ async function connectToDevice() {
 
   const controller = (window as any).ctlr = new Controller(connectionType, dv);
 
-  dv.addEventListener('inputreport', ({ reportId, data }) => {
+  dv.addEventListener('inputreport', ({ data }) => {
     // Parse Input report
     controller.parseInputReport(data);
   });
@@ -127,7 +127,7 @@ async function connectToDevice() {
 
     controller.updateDevice();
 
-    controller.setStateChangeEvent('r2', (curVal, prevVal) => {
+    controller.setStateChangeEvent('r2', () => {
       // console.log('r2 changed:', curVal);
     });
   }
@@ -297,21 +297,35 @@ async function connectToDevice() {
 
     controller.updateDevice();
   });
-  let ming = (window as any).ming = Infinity;
-  let maxg = (window as any).maxg = -Infinity;
 
+  let gyroActive = false;
+
+  gyro.onclick = () => {
+    gyroActive = !gyroActive;
+
+    if (!gyroActive) {
+      gyro.style.transform = "";
+    }
+  };
 
   let rotate = (window as any).rt = 0;
 
   controller.setStateChangeEvent<number>('gyroy', (val) => {
+    rotate = (window as any).rt = ((val / 0xffff) + rotate) % 1000;
+
+    if (gyroActive) {
+      gyro.style.transform = `rotate(${-rotate * 360}deg)`;
+    }
+
+
     // controller.outputStruct.playerIndicator = PlayerLedControl.OFF;
     // const newVal = ;
     // rotate = (window as any).rt = (((val / (0xffff)) * 0.1) + rotate);
 
-    if (val > -100 && val < 100) return;
+    // if (val > -100 && val < 100) return;
 
     // rotate = (window as any).rt += (((val - 0x7fff) / 0x7fff)) * 16;
-    rotate = (window as any).rt = (new Int16Array([val])[0]) / 0x7fff;
+    // rotate = (window as any).rt = (new Int16Array([val])[0]) / 0x7fff;
 
     // if (gyroActive) {
     //   gyro.style.transform = `rotate(${-rotate * 360}deg)`;
@@ -355,7 +369,7 @@ function update() {
     }
 
     rot = (window as any).rt2 = ((window as any).rt + rot) || 0;
-    
+
     if (gyroActive) {
       gyro.style.transform = `rotate(${-rot * 360}deg)`;
     }
